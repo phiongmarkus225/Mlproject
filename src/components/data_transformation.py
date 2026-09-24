@@ -8,6 +8,7 @@ encoding, and saves the fitted preprocessor object so it can be reused later.
 import sys
 from dataclasses import dataclass
 import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -20,12 +21,14 @@ from src.exception import CustomException
 from src.logger import logging
 from src.utils import save_object
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 
 @dataclass
 class DataTransformationConfig:
     """Configuration for preprocessing output artifacts."""
 
-    preprocessor_obj_file_path = os.path.join('artifacts', 'preprocessor.pkl')
+    preprocessor_obj_file_path = os.path.join(PROJECT_ROOT, 'artifacts', 'preprocessor.pkl')
 
 
 class DataTransformation:

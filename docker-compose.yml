@@ -1,0 +1,14 @@
+services:
+  ml-app:
+    build: .
+    container_name: student-performance-app
+    ports:
+      - "5000:5000"
+    volumes:
+      # Bind mount artifacts so a retrained model is picked up without rebuild
+      - ./artifacts:/app/artifacts
+      # Bind mount logs so they persist outside the container
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped

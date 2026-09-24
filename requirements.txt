@@ -6,3 +6,6 @@ matplotlib
 scikit-learn
 catboost
 xgboost
+optuna
+flask
+gunicorn

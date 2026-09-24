@@ -87,15 +87,49 @@ Custom exception membantu developer melihat lokasi error secara lebih jelas keti
    pip install -r requirements.txt
    ```
 
-4. Jalankan data ingestion
+4. Training model (menghasilkan artifacts/model.pkl & preprocessor.pkl)
    ```bash
-   python src/components/data_ingestion.py
+   python src/pipeline/train_pipeline.py
    ```
 
-5. Jika ingin lanjut mengembangkan, tambahkan proses training di modul model_trainer.py dan pipeline train_pipeline.py.
+5. Jalankan web app + frontend
+   ```bash
+   python app.py
+   ```
+   Buka http://localhost:5000
+
+6. Test prediction pipeline secara langsung (tanpa web)
+   ```bash
+   python src/pipeline/predict_pipeline.py
+   ```
+
+## Menjalankan dengan Docker
+
+```bash
+# Build & jalankan dengan docker compose (paling mudah)
+docker compose up --build
+
+# atau manual
+docker build -t ml-project .
+docker run -p 5000:5000 ml-project
+```
+
+Buka http://localhost:5000. Volume `./artifacts` dan `./logs` di-bind ke
+container, sehingga jika model dilatih ulang secara lokal, container langsung
+memakai model baru tanpa perlu rebuild.
+
+## Arsitektur aplikasi web
+
+- `app.py` -> entry point Flask (route `/` untuk form, `/predictdata` untuk prediksi, `/health` untuk health check)
+- `templates/index.html` -> frontend form input fitur siswa
+- `static/` -> CSS styling
+- `src/pipeline/predict_pipeline.py` -> memuat `model.pkl` + `preprocessor.pkl` lalu menghasilkan prediksi
+- `src/pipeline/train_pipeline.py` -> orkestrasi ingestion -> transformation -> training
 
 ## Catatan penting
 
-Saat ini proyek sudah memiliki struktur yang jelas untuk preprocessing dan ingestion data. Bagian training model masih bisa dikembangkan lebih lanjut sesuai kebutuhan proyek Anda.
+Proyek ini sudah memiliki alur end-to-end: ingestion -> preprocessing -> training
+(termasuk hyperparameter tuning dengan Optuna) -> serving via web API. Struktur ini
+mengikuti pola modular yang umum dipakai di industri (component + pipeline + service layer).
 
 Dengan dokumentasi ini, diharapkan orang lain dapat lebih cepat memahami apa yang dilakukan setiap file dan bagaimana alur proyek berjalan.
